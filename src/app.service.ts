@@ -3,6 +3,7 @@ import {
   WriteRecordsCommand,
   WriteRecordsCommandInput,
 } from '@aws-sdk/client-timestream-write';
+import { fromContainerMetadata } from '@aws-sdk/credential-providers';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -27,7 +28,10 @@ export class AppService {
       Records: [record],
     };
 
-    const writeClient = new TimestreamWriteClient({ region: 'eu-central-1' });
+    const writeClient = new TimestreamWriteClient({
+      credentials: fromContainerMetadata(),
+      region: 'eu-central-1',
+    });
     writeClient.send(new WriteRecordsCommand(writeInput)).then(
       () => {
         // this.logger.debug('write response', response);
