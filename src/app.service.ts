@@ -48,7 +48,7 @@ export class AppService {
     };
 
     await this.writeClient.send(new WriteRecordsCommand(writeInput)).then(
-      (data) => {
+      () => {
         // this.logger.debug('write response', data);
       },
       (err) => console.error(err),
