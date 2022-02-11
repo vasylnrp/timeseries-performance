@@ -12,14 +12,25 @@ export class AppService {
     return 'Hello World!';
   }
 
+  private writeClient: TimestreamWriteClient;
+
   runCommand(): string {
-    for (let i = 0; i < 100; i++) {
-      this.insertRecord(i);
-    }
+    // for (let i = 0; i < 100; i++) {
+    // }
+    console.log('test');
+    this.writeClient = new TimestreamWriteClient({
+      // TODO here depends on ENV var
+      // hgach
+      credentials: fromInstanceMetadata(),
+      region: 'eu-central-1',
+    });
+    this.insertRecord(0);
+
     return 'finished';
   }
 
   private insertRecord(index: number) {
+    if (index > 1000) return;
     const record = {
       Dimensions: [{ Name: 'fleet', Value: 'TestingFleet' }],
       MeasureName: `test-measure #${index}`,
@@ -34,12 +45,9 @@ export class AppService {
       Records: [record],
     };
 
-    const writeClient = new TimestreamWriteClient({
-      credentials: fromInstanceMetadata(),
-      region: 'eu-central-1',
-    });
-    writeClient.send(new WriteRecordsCommand(writeInput)).then(
+    this.writeClient.send(new WriteRecordsCommand(writeInput)).then(
       () => {
+        this.insertRecord(index + 1);
         // this.logger.debug('write response', response);
       },
       (err) => console.error('write error:', err),
