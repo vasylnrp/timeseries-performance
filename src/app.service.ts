@@ -32,8 +32,8 @@ export class AppService {
   private async insertRecord(index: number) {
     const record = {
       Dimensions: [
+        { Name: 'vehicleId', Value: (Math.random() * 100_000).toString() },
         { Name: 'Index', Value: index.toString() },
-        { Name: 'fleet', Value: 'TestingFleet' },
       ],
       MeasureName: `test-measure #${Math.round(Math.random() * 20)}`,
       MeasureValue: (Math.random() * 100).toString(),
