@@ -3,8 +3,8 @@ import {
   WriteRecordsCommand,
   WriteRecordsCommandInput,
 } from '@aws-sdk/client-timestream-write';
-import { fromInstanceMetadata } from '@aws-sdk/credential-providers';
-import { Injectable } from '@nestjs/common';
+import { fromInstanceMetadata, fromEnv } from '@aws-sdk/credential-providers';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
@@ -14,43 +14,44 @@ export class AppService {
 
   private writeClient: TimestreamWriteClient;
 
-  runCommand(): string {
-    // for (let i = 0; i < 100; i++) {
-    // }
-    console.log('test');
+  private readonly logger = new Logger(AppService.name);
+
+  runCommand(toInsert: number): string {
     this.writeClient = new TimestreamWriteClient({
-      // TODO here depends on ENV var
       // hgach
-      credentials: fromInstanceMetadata(),
+      credentials: process.env.RUN_LOCALLY ? fromEnv() : fromInstanceMetadata(),
       region: 'eu-central-1',
     });
-    this.insertRecord(0);
+    for (let i = 1; i <= toInsert; i++) {
+      this.insertRecord(i);
+    }
 
     return 'finished';
   }
 
-  private insertRecord(index: number) {
-    if (index > 1000) return;
+  private async insertRecord(index: number) {
     const record = {
-      Dimensions: [{ Name: 'fleet', Value: 'TestingFleet' }],
-      MeasureName: `test-measure #${index}`,
+      Dimensions: [
+        { Name: 'Index', Value: index.toString() },
+        { Name: 'fleet', Value: 'TestingFleet' },
+      ],
+      MeasureName: `test-measure #${Math.round(Math.random() * 20)}`,
       MeasureValue: (Math.random() * 100).toString(),
       Time: Date.now().toString(),
     };
 
     const writeInput: WriteRecordsCommandInput = {
       DatabaseName: 'sampleDB-single',
-      TableName: 'IoT',
+      TableName: 'test',
 
       Records: [record],
     };
 
-    this.writeClient.send(new WriteRecordsCommand(writeInput)).then(
-      () => {
-        this.insertRecord(index + 1);
-        // this.logger.debug('write response', response);
+    await this.writeClient.send(new WriteRecordsCommand(writeInput)).then(
+      (data) => {
+        // this.logger.debug('write response', data);
       },
-      (err) => console.error('write error:', err),
+      (err) => console.error(err),
     );
   }
 }

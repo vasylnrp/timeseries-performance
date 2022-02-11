@@ -12,6 +12,6 @@ export class AppController {
 
   @Get('run')
   runCommand(): string {
-    return this.appService.runCommand();
+    return this.appService.runCommand(3);
   }
 }
