@@ -13,11 +13,17 @@ export class AppService {
   }
 
   runCommand(): string {
-    const index = 0;
+    for (let i = 0; i < 100; i++) {
+      this.insertRecord(i);
+    }
+    return 'finished';
+  }
+
+  private insertRecord(index: number) {
     const record = {
       Dimensions: [{ Name: 'fleet', Value: 'TestingFleet' }],
       MeasureName: `test-measure #${index}`,
-      MeasureValue: '12.34',
+      MeasureValue: (Math.random() * 100).toString(),
       Time: Date.now().toString(),
     };
 
@@ -38,6 +44,5 @@ export class AppService {
       },
       (err) => console.error('write error:', err),
     );
-    return 'finished';
   }
 }
