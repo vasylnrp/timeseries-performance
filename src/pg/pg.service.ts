@@ -8,7 +8,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { InsertValuesMissingError, Repository } from 'typeorm';
-import { VehicleEvent } from './pg/model/VehicleEvent.entity';
+import { VehicleEvent } from './model/VehicleEvent.entity';
 
 @Injectable()
 export class PgService {
@@ -55,9 +55,8 @@ export class PgService {
   private async insertRecord(index: number) {
     const record = {
       vehicleId: 'vehicle-' + Math.round(Math.random() * 100_000).toString(),
-      // Index', Value: index.toString() },
       measureName: `test-measure #${Math.round(Math.random() * 20)}`,
-      measureValue: (Math.random() * 100).toString(),
+      measureValue: (Math.random() * 100).toString() + 'index-' + index,
     };
 
     await this.create(record);

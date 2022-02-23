@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PgService } from 'src/pg.service';
+import { PgService } from 'src/pg/pg.service';
 import { VehicleEvent } from 'src/pg/model/VehicleEvent.entity';
 import { BaseEntity } from 'typeorm';
 import { PgController } from './pg.controller';

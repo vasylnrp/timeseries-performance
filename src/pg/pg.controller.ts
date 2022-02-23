@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { PgService } from 'src/pg.service';
+import { PgService } from 'src/pg/pg.service';
 
 @Controller('pg')
 export class PgController {
