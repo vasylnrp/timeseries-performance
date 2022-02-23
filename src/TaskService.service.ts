@@ -15,7 +15,7 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_5_SECONDS)
   handleCron() {
-    const toInsert = 5_000;
+    const toInsert = parseInt(process.env.INSERT_PER_5_SECONDS);
     this.pgService.runCommand(toInsert);
     this.logger.debug(`insert ${toInsert} every 5 seconds`);
   }
